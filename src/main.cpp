@@ -24,4 +24,25 @@ bool MyApp::OnInit()
 MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
+    const int WIDTH = FromDIP(30);
+    const int HEIGHT = FromDIP(30);
+
+    const int COLS = 20;
+    const int ROWS = 13;
+
+    auto sizer = new wxGridSizer(ROWS, COLS, 0, 0);
+
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+            auto square = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(WIDTH, HEIGHT));
+            bool isDark = (i + j) % 2 == 0;
+            square->SetBackgroundColour(isDark ? wxColor(80, 80, 80) : *wxWHITE);
+
+            sizer->Add(square, 1, wxEXPAND);
+        }
+    }
+
+    this->SetSizerAndFit(sizer);
 }
