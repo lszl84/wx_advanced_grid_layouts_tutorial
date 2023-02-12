@@ -30,6 +30,7 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     const int COLS = 20;
     const int ROWS = 13;
 
+    auto mainSizer = new wxBoxSizer(wxVERTICAL);
     auto sizer = new wxGridSizer(ROWS, COLS, 0, 0);
 
     for (int i = 0; i < ROWS; i++)
@@ -44,5 +45,6 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
         }
     }
 
-    this->SetSizerAndFit(sizer);
+    mainSizer->Add(sizer);
+    this->SetSizerAndFit(mainSizer);
 }
