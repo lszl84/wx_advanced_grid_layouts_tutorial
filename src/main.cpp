@@ -1,5 +1,8 @@
 #include <wx/wx.h>
 #include <wx/gbsizer.h>
+#include <wx/file.h>
+#include <wx/filename.h>
+#include <wx/filedlg.h>
 
 #include <vector>
 #include "bufferedbitmap.h"
@@ -55,7 +58,6 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     nameFormSizer->Add(loadButton, 0, wxALIGN_CENTER_VERTICAL);
 
     auto bitmap = new BufferedBitmap(panel, wxID_ANY, wxBitmap(wxSize(1, 1)), wxDefaultPosition, FromDIP(wxSize(400, 200)));
-    bitmap->SetBackgroundColour(wxColour(0, 0, 0));
 
     sizer->Add(nameLabel, {0, 0}, {1, 1}, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL);
     sizer->Add(kindLabel, {1, 0}, {1, 1}, wxALIGN_RIGHT);
@@ -76,4 +78,36 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
 
     mainSizer->Add(panel, 1, wxEXPAND | wxALL, margin);
     this->SetSizerAndFit(mainSizer);
+
+    wxInitAllImageHandlers();
+
+    loadButton->Bind(wxEVT_BUTTON, [=](wxCommandEvent &event)
+                     {
+                         wxFileDialog openFileDialog(this, "Open Image", "", "", "Image files (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+                         if (openFileDialog.ShowModal() == wxID_CANCEL)
+                         {
+                             return;
+                         }
+
+                         wxImage image;
+                         if (!image.LoadFile(openFileDialog.GetPath()))
+                         {
+                             wxMessageBox("Failed to load image");
+                             return;
+                         }
+
+                         // set bitmap
+                         bitmap->SetBitmap(wxBitmap(image));
+                         nameText->SetValue(openFileDialog.GetPath());
+
+                         wxFile file(openFileDialog.GetPath());
+
+                         kindValue->SetLabel(wxFileName(openFileDialog.GetPath()).GetExt().Upper());
+                         sizeValue->SetLabel(wxString::Format("%d KB", static_cast<int>(file.Length() / 1024)));
+
+                         dimensionsValue->SetLabel(wxString::Format("%d x %d", image.GetWidth(), image.GetHeight()));
+
+                         this->Layout();
+                         this->Fit(); });
 }
