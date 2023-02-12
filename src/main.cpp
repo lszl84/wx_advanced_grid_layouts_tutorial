@@ -2,6 +2,7 @@
 #include <wx/gbsizer.h>
 
 #include <vector>
+#include "bufferedbitmap.h"
 
 class MyApp : public wxApp
 {
@@ -35,38 +36,38 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
 
     auto sizer = new wxGridBagSizer(margin, margin);
 
-    std::vector<std::pair<wxGBPosition, wxGBSpan>> items = {
-        {{0, 0}, {1, 2}},
-        {{1, 0}, {1, 1}},
-        {{2, 0}, {1, 1}},
-        {{3, 0}, {1, 2}},
-        {{4, 0}, {1, 3}},
-        {{1, 1}, {1, 1}},
-        {{2, 1}, {1, 1}},
-        {{0, 2}, {4, 1}}};
+    auto nameLabel = new wxStaticText(panel, wxID_ANY, "File Name:");
+    auto kindLabel = new wxStaticText(panel, wxID_ANY, "Kind:");
+    auto sizeLabel = new wxStaticText(panel, wxID_ANY, "Size:");
+    auto dimensionsLabel = new wxStaticText(panel, wxID_ANY, "Dimensions:");
 
-    for (auto &item : items)
-    {
-        auto initialSize = sizer->GetEmptyCellSize() * 2;
+    auto kindValue = new wxStaticText(panel, wxID_ANY, "PNG");
+    auto sizeValue = new wxStaticText(panel, wxID_ANY, "1.2 MB");
+    auto dimensionsValue = new wxStaticText(panel, wxID_ANY, "1024x768");
 
-        if (item.first == wxGBPosition(1, 0))
-        {
-            initialSize.SetWidth(FromDIP(100));
-        }
+    auto nameText = new wxTextCtrl(panel, wxID_ANY);
+    nameText->SetEditable(false);
 
-        auto p = new wxPanel(panel, wxID_ANY, wxDefaultPosition, initialSize);
-        p->SetBackgroundColour(wxColour(100, 100, 200));
+    auto loadButton = new wxButton(panel, wxID_ANY, "Load...");
 
-        sizer->Add(p, item.first, item.second, wxEXPAND);
-    }
+    auto bitmap = new BufferedBitmap(panel, wxID_ANY, wxBitmap(wxSize(1, 1)), wxDefaultPosition, FromDIP(wxSize(400, 200)));
+    bitmap->SetBackgroundColour(wxColour(0, 0, 0));
 
-    sizer->AddGrowableRow(0, 2);
-    sizer->AddGrowableRow(4, 1);
+    sizer->Add(nameLabel, {0, 0}, {1, 1}, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL);
+    sizer->Add(kindLabel, {1, 0}, {1, 1}, wxALIGN_RIGHT);
+    sizer->Add(sizeLabel, {2, 0}, {1, 1}, wxALIGN_RIGHT);
+    sizer->Add(dimensionsLabel, {3, 0}, {1, 1}, wxALIGN_RIGHT);
 
-    sizer->AddGrowableCol(1);
+    sizer->Add(kindValue, {1, 1}, {1, 1}, wxEXPAND);
+    sizer->Add(sizeValue, {2, 1}, {1, 1}, wxEXPAND);
+    sizer->Add(dimensionsValue, {3, 1}, {1, 1}, wxEXPAND);
+
+    sizer->Add(nameText, {0, 1}, {1, 2}, wxEXPAND);
+    sizer->Add(loadButton, {0, 3}, {1, 1}, wxEXPAND);
+    sizer->Add(bitmap, {1, 2}, {3, 2}, wxEXPAND);
+
+    sizer->AddGrowableRow(3);
     sizer->AddGrowableCol(2);
-
-    sizer->SetMinSize(FromDIP(wxSize(600, 400)));
 
     panel->SetSizer(sizer);
 
