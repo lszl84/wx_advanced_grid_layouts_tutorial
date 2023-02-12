@@ -50,6 +50,10 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
 
     auto loadButton = new wxButton(panel, wxID_ANY, "Load...");
 
+    auto nameFormSizer = new wxBoxSizer(wxHORIZONTAL);
+    nameFormSizer->Add(nameText, 1, wxEXPAND | wxRIGHT, margin);
+    nameFormSizer->Add(loadButton, 0, wxALIGN_CENTER_VERTICAL);
+
     auto bitmap = new BufferedBitmap(panel, wxID_ANY, wxBitmap(wxSize(1, 1)), wxDefaultPosition, FromDIP(wxSize(400, 200)));
     bitmap->SetBackgroundColour(wxColour(0, 0, 0));
 
@@ -62,8 +66,7 @@ MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     sizer->Add(sizeValue, {2, 1}, {1, 1}, wxEXPAND);
     sizer->Add(dimensionsValue, {3, 1}, {1, 1}, wxEXPAND);
 
-    sizer->Add(nameText, {0, 1}, {1, 2}, wxEXPAND);
-    sizer->Add(loadButton, {0, 3}, {1, 1}, wxEXPAND);
+    sizer->Add(nameFormSizer, {0, 1}, {1, 3}, wxEXPAND);
     sizer->Add(bitmap, {1, 2}, {3, 2}, wxEXPAND);
 
     sizer->AddGrowableRow(3);
