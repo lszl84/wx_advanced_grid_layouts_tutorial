@@ -1,4 +1,6 @@
 #include <wx/wx.h>
+#include <wx/gbsizer.h>
+
 #include <vector>
 
 class MyApp : public wxApp
@@ -8,12 +10,6 @@ public:
 };
 
 wxIMPLEMENT_APP(MyApp);
-
-enum class InputType
-{
-    SingleLine,
-    MultiLine
-};
 
 class MyFrame : public wxFrame
 {
@@ -31,44 +27,40 @@ bool MyApp::OnInit()
 MyFrame::MyFrame(const wxString &title, const wxPoint &pos, const wxSize &size)
     : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
-    std::vector<std::pair<wxString, InputType>> form = {
-        {"Name", InputType::SingleLine},
-        {"Address", InputType::MultiLine},
-        {"Phone", InputType::SingleLine},
-        {"Email", InputType::SingleLine},
-        {"Notes", InputType::MultiLine}};
-
     const auto margin = FromDIP(10);
 
     auto mainSizer = new wxBoxSizer(wxVERTICAL);
     wxPanel *panel = new wxPanel(this, wxID_ANY);
     this->SetBackgroundColour(panel->GetBackgroundColour());
 
-    auto sizer = new wxFlexGridSizer(form.size(), 2, margin, margin);
+    auto sizer = new wxGridBagSizer(margin, margin);
+
+    std::vector<std::pair<wxGBPosition, wxGBSpan>> items = {
+        {{0, 0}, {1, 2}},
+        {{1, 0}, {1, 1}},
+        {{2, 0}, {1, 1}},
+        {{3, 0}, {1, 2}},
+        {{4, 0}, {1, 3}},
+        {{1, 1}, {1, 1}},
+        {{2, 1}, {1, 1}},
+        {{0, 2}, {4, 1}}};
+
+    for (auto &item : items)
+    {
+        auto p = new wxPanel(panel, wxID_ANY, wxDefaultPosition, sizer->GetEmptyCellSize());
+        p->SetBackgroundColour(wxColour(100, 100, 200));
+
+        sizer->Add(p, item.first, item.second, wxEXPAND);
+    }
+
+    sizer->AddGrowableRow(0, 2);
+    sizer->AddGrowableRow(4, 1);
 
     sizer->AddGrowableCol(1);
+    sizer->AddGrowableCol(2);
 
-    // set growable row for multiline input
-    for (size_t i = 0; i < form.size(); i++)
-    {
-        if (form[i].second == InputType::MultiLine)
-        {
-            sizer->AddGrowableRow(i);
-        }
-    }
+    sizer->SetMinSize(FromDIP(wxSize(600, 400)));
 
-    for (const auto &[label, type] : form)
-    {
-        auto labelCtrl = new wxStaticText(panel, wxID_ANY, label);
-        sizer->Add(labelCtrl, 0, wxALIGN_CENTER_VERTICAL);
-
-        auto style = type == InputType::SingleLine ? 0 : wxTE_MULTILINE;
-        auto inputCtrl = new wxTextCtrl(panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, style);
-
-        sizer->Add(inputCtrl, 1, wxEXPAND);
-    }
-
-    sizer->SetMinSize(FromDIP(400), wxDefaultSize.GetHeight());
     panel->SetSizer(sizer);
 
     mainSizer->Add(panel, 1, wxEXPAND | wxALL, margin);
