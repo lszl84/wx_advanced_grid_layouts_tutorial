@@ -5,5 +5,5 @@ Advanced layouts in wxWidgets with `wxGridSizer`, `wxFlexGridSizer`, and `wxGrid
 FREE wxWidgets course: https://www.youtube.com/playlist?list=PL0qQTroQZs5vVmTuBew-nTx9DIu6rRl2c
 
 ---
-Check out the blog for more! [www.lukesdevtutorials.com](https://www.lukesdevtutorials.com)
+Check out the blog for more! [www.onlyfastcode.com](https://www.onlyfastcode.com)
 ---
